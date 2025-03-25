@@ -530,7 +530,7 @@ document.addEventListener('keydown', (e) => {
         scene.add(grid);
 
         const loader = new THREE.GLTFLoader();
-        loader.load('2010_lamborghini_murcielago_lp_670-4_sv.glb', (gltf) => {
+        loader.load('https://nturukunga.github.io/rTheCarGallery/models/murcielago.glb', (gltf) => {
             gltf.scene.renderOrder = 2;
             gltf.scene.scale.set(0.7, 0.7, 0.7);
             gltf.scene.position.set(0, -0.3, 0);
