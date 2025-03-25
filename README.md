@@ -6,7 +6,7 @@
 
 **Your ultimate interactive 3D car showroom** with cyberpunk vibes and next-level customization!
 
-👉 [Live Demo](https://yourdomain.com) | 📱 [Mobile Optimized] | 💻 [Desktop Recommended]
+👉 [Live Demo](https://.com) | 📱 [Mobile Optimized] | 💻 [Desktop Recommended]
 
 ![Showcase Gif](./demo.gif)
 
