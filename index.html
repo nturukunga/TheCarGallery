@@ -17,6 +17,13 @@
         backdrop-filter: blur(5px);
     }
 
+    #zoom-control {
+        position: fixed;
+        top: 25px;
+        left: 20px;
+        width: 200px;
+    }
+
     .control-btn2 {
         position: fixed;
         top: 20px;
@@ -288,6 +295,12 @@
         </select>
     </div>
 
+    
+
+    <div id="zoom-control">
+        <input type="range" min="1" max="100" value="50" id="zoom-slider">
+    </div> 
+
     <div class="polaroid-column" id="left-polaroids">
         <div class="polaroid">
             <div class="placeholder" style="height: 200px; background: #eee;"> <img src="images/FAP.png" alt="Front Angle">
@@ -371,6 +384,36 @@
         keyLight.shadow.mapSize.width = 2048;
         keyLight.shadow.mapSize.height = 2048;
         groundLight.intensity = 0.8;
+
+        const carCatalog = {
+    'murcielago': {
+        model: 'models/murcielago.glb',
+        specs: { /* ... */ },
+        polaroids: ['fap.png', 'engine.jpg', 'interior.jpg']
+    },
+    'chiron': {
+        model: 'models/chiron.glb',
+        specs: { /* ... */ },
+        polaroids: ['chiron-front.jpg']
+    }
+};
+
+let currentCar = 'murcielago';
+
+function loadCar(modelKey) {
+    // Destroy previous model
+    scene.traverse(child => {
+        if(child.userData.isCar) {
+            scene.remove(child);
+        }
+    });
+
+    // Load new model
+    loader.load(carCatalog[modelKey].model, (gltf) => {
+        gltf.scene.userData.isCar = true;
+        // Apply standard transformations
+    });
+}
 
         let currentEnvironment = null;
         const environments = {
@@ -464,6 +507,22 @@
         particleSystem.position.z = -5;
         scene.add(particleSystem);
     
+        const zoomSlider = document.getElementById('zoom-slider');
+zoomSlider.addEventListener('input', (e) => {
+    camera.fov = 75 * (e.target.value / 50);
+    camera.updateProjectionMatrix();
+});
+
+document.addEventListener('keydown', (e) => {
+    if(e.ctrlKey && e.key === '+') {
+        camera.fov *= 0.9;
+        camera.updateProjectionMatrix();
+    }
+    if(e.ctrlKey && e.key === '-') {
+        camera.fov *= 1.1;
+        camera.updateProjectionMatrix();
+    }
+});
         scene.add(new THREE.GridHelper(100, 100));
         const grid = new THREE.GridHelper(100, 100);
         grid.renderOrder = 1;
