@@ -1,6 +1,6 @@
-# 🚗⚡ VroomVibe - Next-Gen 3D Car Experience 
+# 🚗⚡ TheCarGallery- Next-Gen 3D Car Experience 
 
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/TheCarGallery?style=social)](https://github.com/yourusername/TheCarGallery)
+[![GitHub stars](https://img.shields.io/github/stars/nturukunga/TheCarGallery?style=social)](https://github.com/yourusername/TheCarGallery)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Three.js Version](https://img.shields.io/badge/Three.js-r128+-blue.svg)](https://threejs.org)
 
