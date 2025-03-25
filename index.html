@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+
+#control-bar {
+        position: relative;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 15px;
+        z-index: 1000;
+        background: rgba(0,0,0,0.7);
+        padding: 12px 24px;
+        border-radius: 25px;
+        backdrop-filter: blur(5px);
+    }
+
+    .control-btn2 {
+        position: fixed;
+        top: 20px;
+        left: 65%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.7);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-family: 'Courier New', monospace;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+
+    .control-btn2:hover {
+        background: #ff3300;
+        box-shadow: 0 0 15px #ff3300;
+    }
+    .control-btn {
+        position: fixed;
+        top: 20px;
+        left: 35%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.7);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-family: 'Courier New', monospace;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+    .control-btn:hover {
+        background: #ff3300;
+        box-shadow: 0 0 15px #ff3300;
+    }
+    
+    .control-btn3 {
+        position: fixed;
+        top: -59px;
+        left: 90%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.7);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-family: 'Courier New', monospace;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+    .control-btn3:hover {
+        background: #ff3300;
+        box-shadow: 0 0 15px #ff3300;
+    }
+
+    /* Environment Selector */
+    #environment-selector {
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+    }
+       
+    #menu-toggle {
+        right: 20px;
+    }
+
+    .windows-icon {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 3px;
+        width: 20px;
+        height: 20px;
+    }
+    .windows-square {
+        background: white;
+        width: 8px;
+        height: 8px;            
+    }
+        
+    #model-container {
+        z-index: 0 !important;
+    }
+    .polaroid-column, .spec-card {
+        z-index: 1;
+        position: relative;
+    }
+    #wireframe-toggle {
+        position: fixed;
+        top: 20px;
+        left: 20%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.7);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-family: 'Courier New', monospace;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+    #loading-screen {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .loader {
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #ff3300;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    #wireframe-toggle:hover {
+        background: #ff3300;
+        box-shadow: 0 0 15px #ff3300;
+    }
+
+    #left-polaroids {
+        transform: translateX(-120%);
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #left-polaroids.active {
+        transform: translateX(0);
+    }
+
+    #menu-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(0,0,0,0.7);
+        border: none;
+        padding: 12px;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 1000;
+        transition: all 0.3s;
+    }
+    #menu-toggle:hover {
+        background: #00aaff;
+        transform: rotate(90deg);
+    }
+    .backroom-fog {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.8));
+        z-index: 2;
+    }
+
+    body { 
+        margin: 0;
+        background: #111;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+    }
+    
+    #model-container {
+        position: fixed;
+        width: 50%;
+        height: 100vh;
+        left: 5%;
+    }
+
+    .polaroid-column {
+        position: fixed;
+        top: 2px;
+        width: 20%;
+        padding: 15px;
+    }
+    #left-polaroids {
+        left: 20px;
+    }
+    .polaroid {
+        width: 100%;
+        margin-bottom: 20px;
+        background: white;
+        padding: 10px;
+        border-radius: 3px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        transition: transform 0.3s ease;
+    }
+    .polaroid img {
+        width: 100%;
+        height: 100%; 
+        object-fit: cover; 
+        background: #f5f5f5; 
+        padding: 5px;
+        border-radius: 2px;
+    }
+
+    .polaroid p {
+        text-align: center;
+        margin: 10px 0 5px;
+        font-size: 0.9em;
+        color: #444;
+    }
+
+    .polaroid:hover {
+        transform: rotate(2deg) scale(1.02);
+        z-index: 1;
+    }
+
+    #spec-cards {
+        right: 20px;
+        width: 25%;
+    }
+    .spec-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        margin: 10px 0;
+        border-left: 4px solid #ff3300;
+        border-radius: 4px;
+        color: white;
+    }
+    </style>
+</head>
+<body>
+    <audio id="ambient-sound" hidden>
+        <source src="https://assets.mixkit.co/active_storage/sfx/3003/3003-preview.mp3" type="audio/mpeg">
+    </audio>
+    
+    <div class="backroom-fog"></div>
+    <button class="ui-button" id="wireframe-toggle">WIREFRAME</button>
+    <button id="music-toggle" class="control-btn">🔊 Music</button>
+    <button id="dust-toggle" class="control-btn2">🌌 Dust</button>
+    <button class="ui-button" id="menu-toggle">
+        <div class="windows-icon">
+            <div class="windows-square"></div>
+            <div class="windows-square"></div>
+            <div class="windows-square"></div>
+            <div class="windows-square"></div>
+        </div>
+    </button>
+    <div id="environment-selector">
+        <select id="room-select" class="control-btn3">
+            <option value="grid">Showroom</option>
+            <option value="walls">Cyber Garage</option>
+            <option value="outdoor">Outdoor</option>
+        </select>
+    </div>
+
+    <div class="polaroid-column" id="left-polaroids">
+        <div class="polaroid">
+            <div class="placeholder" style="height: 200px; background: #eee;"> <img src="images/FAP.png" alt="Front Angle">
+            </div>
+            <p style="text-align: center; color: #333;">Front Angle Preview</p>
+        </div>
+        <div class="polaroid">
+            <div class="placeholder" style="height: 200px; background: #eee;"><img src="images/engine shot.jpg" alt="Engine Detail"></div>
+            <p style="text-align: center; color: #333;">Engine Detail</p>
+        </div>
+        <div class="polaroid">
+            <div class="placeholder" style="height: 200px; background: #eee;"><img src="images/IS.png" alt="Interior Shot"></div>
+            <p style="text-align: center; color: #333;">Interior Shot</p>
+        </div>
+    </div>
+
+    <div id="model-container"></div>
+
+    <div class="polaroid-column" id="spec-cards">
+        <div class="spec-card">
+            <h3>Engine Specs</h3>
+            <p>6.5L V12 Engine<br>670 HP @ 8000 RPM<br>487 lb-ft Torque</p>
+        </div>
+        <div class="spec-card">
+            <h3>Performance</h3>
+            <p>0-60 mph: 3.2s<br>Top Speed: 342 km/h<br>Weight: 1665 kg</p>
+        </div>
+        <div class="spec-card">
+            <h3>Dimensions</h3>
+            <p>Length: 4.7m<br>Width: 2.1m<br>Height: 1.1m</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true,
+            alpha: true,
+            powerPreference: "high-performance",
+            depth: true
+        });
+        renderer.sortObjects = false;
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('model-container').appendChild(renderer.domElement);
+
+        const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        keyLight.position.set(-5, 5, 5);
+        keyLight.castShadow = true;
+        scene.add(keyLight);
+
+        const fillLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
+        scene.add(fillLight);
+
+        const rimLight = new THREE.DirectionalLight(0x00aaff, 0.6);
+        rimLight.position.set(5, 3, -5);
+        scene.add(rimLight);
+
+        const groundLight = new THREE.PointLight(0xff8800, 0.5);
+        groundLight.position.set(0, -0.5, 0);
+        scene.add(groundLight);
+
+        const headlight = new THREE.SpotLight(0xffffff, 1.2);
+        headlight.position.set(0, 0.5, 3);
+        headlight.angle = Math.PI/6;
+        headlight.penumbra = 0.5;
+        scene.add(headlight);
+
+        const flickerLight = new THREE.PointLight(0xffaa77, 1.5);
+        flickerLight.position.set(0, 3, 0);
+        scene.add(flickerLight);
+
+        setInterval(() => {
+            flickerLight.intensity = Math.random() * 0.5 + 0.8;
+        }, 100);
+
+        keyLight.shadow.mapSize.width = 2048;
+        keyLight.shadow.mapSize.height = 2048;
+        groundLight.intensity = 0.8;
+
+        let currentEnvironment = null;
+        const environments = {
+            grid: () => {
+                scene.add(new THREE.GridHelper(100, 100));
+            },
+            walls: () => {
+                const walls = new THREE.Group();
+                const wallMaterial = new THREE.MeshStandardMaterial({ 
+                    color: 0x202030,
+                    metalness: 0.8,
+                    roughness: 0.5
+                });
+                ['front', 'back', 'left', 'right'].forEach((side, i) => {
+                    const wall = new THREE.Mesh(
+                        new THREE.BoxGeometry(50, 20, 1),
+                        wallMaterial
+                    );
+                    wall.castShadow = true;
+                    wall.receiveShadow = true;
+                    wall.position.set(
+                        side === 'left' ? -15 : side === 'right' ? 15 : 0,
+                        0,
+                        side === 'front' ? -15 : side === 'back' ? 15 : 0
+                    );
+                    if(side === 'left' || side === 'right') wall.rotation.y = Math.PI/2;
+                    walls.add(wall);
+                });
+                scene.add(walls);
+                return walls;
+            },
+            outdoor: () => {
+                const floor = new THREE.Mesh(
+                    new THREE.PlaneGeometry(200, 200),
+                    new THREE.MeshStandardMaterial({ color: 0x303030 })
+                );
+                floor.rotation.x = -Math.PI/2;
+                floor.receiveShadow = true;
+                scene.add(floor);
+                return floor;
+            }
+        };
+
+        document.getElementById('room-select').addEventListener('change', (e) => {
+            if(currentEnvironment) scene.remove(currentEnvironment);
+            currentEnvironment = environments[e.target.value]();
+        });
+
+        currentEnvironment = environments.grid();
+
+        const wireframeButton = document.getElementById('wireframe-toggle');
+        wireframeButton.innerHTML = '🌀 WIREFRAME MODE';
+        let wireframeVisible = true;
+        wireframeButton.addEventListener('click', () => {
+            wireframeVisible = !wireframeVisible;
+            scene.traverse(child => {
+                if (child.isLineSegments) child.visible = wireframeVisible;
+            });
+            wireframeButton.textContent = wireframeVisible ? '🌀 WIREFRAME ON' : '🚫 WIREFRAME OFF';
+        });
+
+        let particlesVisible = true;
+        const dustToggle = document.getElementById('dust-toggle');
+        dustToggle.addEventListener('click', () => {
+            particlesVisible = !particlesVisible;
+            particleSystem.visible = particlesVisible;
+            dustToggle.textContent = particlesVisible ? '🌌 Dust On' : '🚫 Dust Off';
+        });
+
+        const menuToggle = document.getElementById('menu-toggle');
+        menuToggle.addEventListener('click', () => {
+            document.getElementById('left-polaroids').classList.toggle('active');
+        });
+
+        const particles = new THREE.BufferGeometry();
+        const positions = new Float32Array(2000 * 3);
+        for(let i = 0; i < 6000; i++) {
+            positions[i] = (Math.random() - 0.5) * 20;
+        }
+        particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const particleSystem = new THREE.Points(
+            particles,
+            new THREE.PointsMaterial({
+                size: 0.1,
+                color: 0x444444,
+                transparent: true,
+                opacity: 0.5,
+                depthTest: false 
+            })
+        );
+        particleSystem.position.z = -5;
+        scene.add(particleSystem);
+    
+        scene.add(new THREE.GridHelper(100, 100));
+        const grid = new THREE.GridHelper(100, 100);
+        grid.renderOrder = 1;
+        grid.material.depthTest = false;
+        scene.add(grid);
+
+        const loader = new THREE.GLTFLoader();
+        loader.load('2010_lamborghini_murcielago_lp_670-4_sv.glb', (gltf) => {
+            gltf.scene.renderOrder = 2;
+            gltf.scene.scale.set(0.7, 0.7, 0.7);
+            gltf.scene.position.set(0, -0.3, 0);
+
+            gltf.scene.traverse((child) => {
+                if (child.material) {
+                    child.material.metalness = 0.5;
+                    child.material.roughness = 0.4;
+                }
+            });
+        
+            gltf.scene.traverse(child => {
+                if (child.isMesh) {
+                    const wireframe = new THREE.LineSegments(
+                        new THREE.EdgesGeometry(child.geometry),
+                        new THREE.LineBasicMaterial({ color: 0x00ffff })
+                    );
+                    child.add(wireframe);
+                }
+            });
+        
+            scene.add(gltf.scene);
+        }, undefined, (error) => {
+            console.error('Error loading model:', error);
+        });
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        camera.position.set(3, 1, 4);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        let uiTimeout;
+        const uiElements = document.querySelectorAll('.polaroid, .spec-card');
+        
+        controls.addEventListener('start', () => {
+            uiElements.forEach(el => el.style.opacity = '0');
+        });
+
+        controls.addEventListener('end', () => {
+            uiElements.forEach(el => el.style.opacity = '1');
+            clearTimeout(uiTimeout);
+            uiTimeout = setTimeout(() => {
+                uiElements.forEach(el => el.style.opacity = '0.5');
+            }, 3000);
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        let menuVisible = false;
+        const toggleMenu = () => {
+            menuVisible = !menuVisible;
+            document.getElementById('left-polaroids').style.display = 
+                menuVisible ? 'block' : 'none';
+        };
+
+        document.getElementById('wireframe-toggle').addEventListener('click', toggleWireframe);
+        document.getElementById('menu-toggle').addEventListener('click', toggleMenu);
+
+        const backroomAmbience = () => {
+
+            const particles = new THREE.BufferGeometry();
+            const positions = new Float32Array(500 * 3);
+            for(let i = 0; i < 1500; i++) {
+                positions[i] = (Math.random() - 0.5) * 10;
+            }
+            particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            
+            const particleMaterial = new THREE.PointsMaterial({
+                size: 0.05,
+                color: 0x444444,
+                transparent: true
+            });
+            
+            const particleSystem = new THREE.Points(particles, particleMaterial);
+            scene.add(particleSystem);
+
+            const music = document.getElementById('ambient-sound');
+            music.volume = 0.3;
+            let loadingTimeout;
+            const loadingScreen = document.getElementById('loading-screen');
+
+            loadingScreen.style.display = 'flex';
+
+            loadingTimeout = setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 4000);
+
+            const loadingManager = new THREE.LoadingManager(
+                () => {
+                    clearTimeout(loadingTimeout);
+                    loadingScreen.style.display = 'none';
+                },
+                (item, loaded, total) => {
+                    console.log(`Loaded ${loaded}/${total} items`);
+                },
+                (url) => {
+                    console.error(`Error loading ${url}`);
+                    clearTimeout(loadingTimeout);
+                    loadingScreen.style.display = 'none';
+                }
+            );
+
+            const carCatalog = {
+                'murcielago': {
+                    model: 'models/murcielago.glb',
+                    specs: {  },
+                    polaroids: ['fap.png', 'engine.jpg', 'interior.jpg']
+                },
+                'chiron': {
+                    model: 'models/chiron.glb',
+                    specs: {  },
+                    polaroids: ['chiron-front.jpg', 'chiron-side.jpg']
+                }
+            };
+
+            let currentCar = 'murcielago';
+
+            function loadCar(modelKey) {
+                scene.traverse(child => {
+                    if(child.userData.isCar) {
+                        scene.remove(child);
+                    }
+                });
+                loader.load(carCatalog[modelKey].model, (gltf) => {
+                    gltf.scene.userData.isCar = true;
+                });
+            }
+
+            const musicTracks = [
+                'audio/cyber-ambience.mp3',
+                'audio/bass-wave.mp3',
+                'audio/neon-drive.mp3'
+            ];
+            let currentTrack = 0;
+            const audioElement = new Audio(musicTracks[currentTrack]);
+            audioElement.loop = true;
+
+            document.getElementById('music-toggle').addEventListener('click', () => {
+                if(audioElement.paused) {
+                    audioElement.play();
+                    document.getElementById('music-toggle').textContent = '🔊 ON';
+                } else {
+                    audioElement.pause();
+                    document.getElementById('music-toggle').textContent = '🔇 OFF';
+                }
+            });
+
+            document.getElementById('track-select').addEventListener('change', (e) => {
+                currentTrack = e.target.value;
+                audioElement.src = musicTracks[currentTrack];
+                audioElement.play();
+            });
+
+            function createEnvironment() {
+                const room = new THREE.Group();
+                
+                const floor = new THREE.Mesh(
+                    new THREE.PlaneGeometry(100, 100),
+                    new THREE.MeshStandardMaterial({ color: 0x202020 })
+                );
+                floor.rotation.x = -Math.PI / 2;
+                floor.receiveShadow = true;
+                room.add(floor);
+
+                const wallGeometry = new THREE.BoxGeometry(50, 20, 1);
+                const wallMaterial = new THREE.MeshPhysicalMaterial({
+                    color: 0x303030,
+                    metalness: 0.8,
+                    roughness: 0.5
+                });
+
+                const walls = [];
+                for(let i = 0; i < 4; i++) {
+                    const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+                    wall.castShadow = true;
+                    walls.push(wall);
+                }
+                
+                walls[0].position.z = -10;
+                walls[1].position.z = 10;
+                walls[2].position.x = -10;
+                walls[3].position.x = 10;
+                walls.forEach(w => w.rotation.y = Math.PI/2);
+                room.add(...walls);
+
+                scene.add(room);
+            }
+
+            const zoomSlider = document.getElementById('zoom-slider');
+            zoomSlider.addEventListener('input', (e) => {
+                camera.fov = 75 * (e.target.value / 50);
+                camera.updateProjectionMatrix();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if(e.ctrlKey && e.key === '+') {
+                    camera.fov *= 0.9;
+                    camera.updateProjectionMatrix();
+                }
+                if(e.ctrlKey && e.key === '-') {
+                    camera.fov *= 1.1;
+                    camera.updateProjectionMatrix();
+                }
+            });
+
+            const loader = new THREE.GLTFLoader(loadingManager);
+            const textureLoader = new THREE.TextureLoader(loadingManager);
+
+            let musicStarted = false;    
+            const startMusic = () => {
+                if(!musicStarted) {
+                    music.play()
+                        .then(() => musicStarted = true)
+                        .catch(err => console.log('Music error:', err));
+                }
+            };
+            
+            document.addEventListener('click', startMusic);
+            document.addEventListener('keydown', startMusic);
+        };      
+    
+        backroomAmbience();
+    </script>
+</body>
+</html>
+
+
