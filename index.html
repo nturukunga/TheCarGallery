@@ -522,6 +522,42 @@ document.addEventListener('keydown', (e) => {
         camera.fov *= 1.1;
         camera.updateProjectionMatrix();
     }
+    if(e.key.toLowerCase() === 'm') {
+    const musicBtn = document.getElementById('music-toggle');
+    musicBtn.click(); 
+  }
+   // Space - Environment Toggle
+   if(e.key === ' ') {
+    const envSelect = document.getElementById('room-select');
+    const currentIndex = Array.from(envSelect.options).findIndex(opt => opt.selected);
+    const nextIndex = (currentIndex + 1) % envSelect.options.length;
+    envSelect.selectedIndex = nextIndex;
+    envSelect.dispatchEvent(new Event('change'));
+  }
+
+  // Ctrl+W - Wireframe
+  if(e.ctrlKey && e.key.toLowerCase() === 'w') {
+    const wireframeBtn = document.getElementById('wireframe-toggle');
+    wireframeBtn.click();
+    e.preventDefault(); // Prevent browser tab close
+  }
+});
+
+// WASD Orbit (Requires custom camera controls)
+const moveSpeed = 0.2;
+document.addEventListener('keydown', (e) => {
+  const direction = new THREE.Vector3();
+  
+  switch(e.key.toLowerCase()) {
+    case 'w': direction.z = -1; break;
+    case 's': direction.z = 1; break;
+    case 'a': direction.x = -1; break;
+    case 'd': direction.x = 1; break;
+  }
+
+  camera.position.add(direction.multiplyScalar(moveSpeed));
+  controls.target.add(direction.multiplyScalar(moveSpeed));
+  controls.update();
 });
         scene.add(new THREE.GridHelper(100, 100));
         const grid = new THREE.GridHelper(100, 100);
