@@ -19,9 +19,13 @@
 
     #zoom-control {
         position: fixed;
-        top: 25px;
-        left: 40px;
-        width: 20px;
+        top: 50%;
+        left: 20px;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,0.7);
+        padding: 15px 5px;
+        border-radius: 25px;
+        z-index: 1000;
     }
 
     .control-btn2 {
@@ -150,6 +154,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        color: white;
     }
     
     .loader {
@@ -159,6 +164,13 @@
         width: 50px;
         height: 50px;
         animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+    }
+
+    .loading-progress {
+        margin-top: 10px;
+        font-size: 16px;
+        font-family: 'Courier New', monospace;
     }
     
     @keyframes spin {
@@ -268,12 +280,49 @@
         border-radius: 4px;
         color: white;
     }
+
+    #car-selector {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.7);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-family: 'Courier New', monospace;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+    
+    #car-selector:hover {
+        background: #ff3300;
+        box-shadow: 0 0 15px #ff3300;
+    }
+    
+    #zoom-slider {
+        writing-mode: bt-lr;
+        -webkit-appearance: slider-vertical;
+        appearance: slider-vertical;
+        width: 20px;
+        height: 150px;
+    }
     </style>
 </head>
 <body>
     <audio id="ambient-sound" hidden>
         <source src="https://assets.mixkit.co/active_storage/sfx/3003/3003-preview.mp3" type="audio/mpeg">
     </audio>
+    
+    <div id="loading-screen">
+        <div class="loader"></div>
+        <h3>Loading 3D Model</h3>
+        <div class="loading-progress">0%</div>
+    </div>
     
     <div class="backroom-fog"></div>
     <button class="ui-button" id="wireframe-toggle">WIREFRAME</button>
@@ -334,6 +383,12 @@
         </div>
     </div>
 
+    <select id="car-selector" class="ui-button">
+        <option value="murcielago">Lamborghini Murcielago</option>
+        <option value="aventador">Lamborghini Aventador</option>
+        <option value="huracan">Lamborghini Huracan</option>
+    </select>
+
     <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -350,6 +405,26 @@
         renderer.sortObjects = false;
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('model-container').appendChild(renderer.domElement);
+
+        // Loading manager to track loading progress
+        const loadingManager = new THREE.LoadingManager();
+        loadingManager.onProgress = function(url, itemsLoaded, itemsTotal) {
+            const progressElement = document.querySelector('.loading-progress');
+            if (progressElement) {
+                const progressPercent = Math.round((itemsLoaded / itemsTotal) * 100);
+                progressElement.textContent = progressPercent + '%';
+            }
+        };
+        
+        loadingManager.onLoad = function() {
+            document.getElementById('loading-screen').style.display = 'none';
+        };
+        
+        loadingManager.onError = function(url) {
+            console.error('Error loading ' + url);
+            document.getElementById('loading-screen').style.display = 'none';
+            alert('Error loading model. Please try again later.');
+        };
 
         const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
         keyLight.position.set(-5, 5, 5);
@@ -385,35 +460,127 @@
         keyLight.shadow.mapSize.height = 2048;
         groundLight.intensity = 0.8;
 
+        // Car catalog with model info and specifications
         const carCatalog = {
-    'murcielago': {
-        model: 'models/murcielago.glb',
-        specs: { /* ... */ },
-        polaroids: ['fap.png', 'engine.jpg', 'interior.jpg']
-    },
-    'chiron': {
-        model: 'models/chiron.glb',
-        specs: { /* ... */ },
-        polaroids: ['chiron-front.jpg']
-    }
-};
+            'murcielago': {
+                model: '2010_lamborghini_murcielago_lp_670-4_sv.glb',
+                scale: 0.7,
+                position: [0, -0.3, 0],
+                specs: {
+                    engine: "6.5L V12 Engine<br>670 HP @ 8000 RPM<br>487 lb-ft Torque",
+                    performance: "0-60 mph: 3.2s<br>Top Speed: 342 km/h<br>Weight: 1665 kg",
+                    dimensions: "Length: 4.7m<br>Width: 2.1m<br>Height: 1.1m"
+                },
+                polaroids: ['images/FAP.png', 'images/engine shot.jpg', 'images/IS.png']
+            },
+            'aventador': {
+                model: 'models/aventador.glb',  // Placeholder - replace with actual path
+                scale: 0.7,
+                position: [0, -0.3, 0],
+                specs: {
+                    engine: "6.5L V12 Engine<br>730 HP @ 8400 RPM<br>509 lb-ft Torque",
+                    performance: "0-60 mph: 2.9s<br>Top Speed: 350 km/h<br>Weight: 1575 kg",
+                    dimensions: "Length: 4.78m<br>Width: 2.26m<br>Height: 1.14m"
+                },
+                polaroids: ['images/FAP.png', 'images/engine shot.jpg', 'images/IS.png'] // Placeholder - replace with actual images
+            },
+            'huracan': {
+                model: 'models/huracan.glb',  // Placeholder - replace with actual path
+                scale: 0.7,
+                position: [0, -0.3, 0],
+                specs: {
+                    engine: "5.2L V10 Engine<br>610 HP @ 8250 RPM<br>413 lb-ft Torque",
+                    performance: "0-60 mph: 3.2s<br>Top Speed: 325 km/h<br>Weight: 1422 kg",
+                    dimensions: "Length: 4.46m<br>Width: 1.92m<br>Height: 1.16m"
+                },
+                polaroids: ['images/FAP.png', 'images/engine shot.jpg', 'images/IS.png'] // Placeholder - replace with actual images
+            }
+        };
 
-let currentCar = 'murcielago';
+        // Current car model reference
+        let currentCarModel = null;
+        let currentCar = 'murcielago';
 
-function loadCar(modelKey) {
-    // Destroy previous model
-    scene.traverse(child => {
-        if(child.userData.isCar) {
-            scene.remove(child);
+        // Function to load car model
+        function loadCarModel(modelKey) {
+            // Show loading screen
+            document.getElementById('loading-screen').style.display = 'flex';
+            
+            // Remove current model if it exists
+            if (currentCarModel) {
+                scene.remove(currentCarModel);
+            }
+            
+            // Update car info
+            const carInfo = carCatalog[modelKey];
+            if (!carInfo) {
+                console.error('Car model not found:', modelKey);
+                document.getElementById('loading-screen').style.display = 'none';
+                return;
+            }
+            
+            // Update specifications
+            document.querySelector('#spec-cards .spec-card:nth-child(1) p').innerHTML = carInfo.specs.engine;
+            document.querySelector('#spec-cards .spec-card:nth-child(2) p').innerHTML = carInfo.specs.performance;
+            document.querySelector('#spec-cards .spec-card:nth-child(3) p').innerHTML = carInfo.specs.dimensions;
+            
+            // Update polaroids (if they exist)
+            const polaroids = document.querySelectorAll('#left-polaroids .polaroid img');
+            carInfo.polaroids.forEach((src, index) => {
+                if (polaroids[index]) {
+                    polaroids[index].src = src;
+                }
+            });
+            
+            // Load new model
+            const loader = new THREE.GLTFLoader(loadingManager);
+            loader.load(carInfo.model, (gltf) => {
+                gltf.scene.scale.set(carInfo.scale, carInfo.scale, carInfo.scale);
+                gltf.scene.position.set(...carInfo.position);
+                
+                // Apply materials
+                gltf.scene.traverse((child) => {
+                    if (child.material) {
+                        child.material.metalness = 0.5;
+                        child.material.roughness = 0.4;
+                    }
+                });
+                
+                // Add wireframes
+                gltf.scene.traverse(child => {
+                    if (child.isMesh) {
+                        const wireframe = new THREE.LineSegments(
+                            new THREE.EdgesGeometry(child.geometry),
+                            new THREE.LineBasicMaterial({ color: 0x00ffff })
+                        );
+                        child.add(wireframe);
+                    }
+                });
+                
+                currentCarModel = gltf.scene;
+                scene.add(gltf.scene);
+            }, 
+            // Progress callback
+            (xhr) => {
+                const progressElement = document.querySelector('.loading-progress');
+                if (progressElement && xhr.total > 0) {
+                    const progressPercent = Math.round((xhr.loaded / xhr.total) * 100);
+                    progressElement.textContent = progressPercent + '%';
+                }
+            },
+            // Error callback
+            (error) => {
+                console.error('Error loading model:', error);
+                document.getElementById('loading-screen').style.display = 'none';
+                alert('Error loading model. Please try again.');
+            });
         }
-    });
 
-    // Load new model
-    loader.load(carCatalog[modelKey].model, (gltf) => {
-        gltf.scene.userData.isCar = true;
-        // Apply standard transformations
-    });
-}
+        // Car selector event listener
+        document.getElementById('car-selector').addEventListener('change', (e) => {
+            currentCar = e.target.value;
+            loadCarModel(currentCar);
+        });
 
         let currentEnvironment = null;
         const environments = {
@@ -508,90 +675,64 @@ function loadCar(modelKey) {
         scene.add(particleSystem);
     
         const zoomSlider = document.getElementById('zoom-slider');
-zoomSlider.addEventListener('input', (e) => {
-    camera.fov = 75 * (e.target.value / 50);
-    camera.updateProjectionMatrix();
-});
+        zoomSlider.addEventListener('input', (e) => {
+            const zoomValue = e.target.value;
+            camera.fov = 120 - zoomValue; // Reversed: lower value = zoom out, higher value = zoom in
+            camera.updateProjectionMatrix();
+        });
 
-document.addEventListener('keydown', (e) => {
-    if(e.ctrlKey && e.key === '+') {
-        camera.fov *= 0.9;
-        camera.updateProjectionMatrix();
-    }
-    if(e.ctrlKey && e.key === '-') {
-        camera.fov *= 1.1;
-        camera.updateProjectionMatrix();
-    }
-    if(e.key.toLowerCase() === 'm') {
-    const musicBtn = document.getElementById('music-toggle');
-    musicBtn.click(); 
-  }
-   // Space - Environment Toggle
-   if(e.key === ' ') {
-    const envSelect = document.getElementById('room-select');
-    const currentIndex = Array.from(envSelect.options).findIndex(opt => opt.selected);
-    const nextIndex = (currentIndex + 1) % envSelect.options.length;
-    envSelect.selectedIndex = nextIndex;
-    envSelect.dispatchEvent(new Event('change'));
-  }
+        document.addEventListener('keydown', (e) => {
+            if(e.ctrlKey && e.key === '+') {
+                camera.fov *= 0.9;
+                camera.updateProjectionMatrix();
+            }
+            if(e.ctrlKey && e.key === '-') {
+                camera.fov *= 1.1;
+                camera.updateProjectionMatrix();
+            }
+            if(e.key.toLowerCase() === 'm') {
+                const musicBtn = document.getElementById('music-toggle');
+                musicBtn.click(); 
+            }
+            // Space - Environment Toggle
+            if(e.key === ' ') {
+                const envSelect = document.getElementById('room-select');
+                const currentIndex = Array.from(envSelect.options).findIndex(opt => opt.selected);
+                const nextIndex = (currentIndex + 1) % envSelect.options.length;
+                envSelect.selectedIndex = nextIndex;
+                envSelect.dispatchEvent(new Event('change'));
+            }
 
-  // Ctrl+W - Wireframe
-  if(e.ctrlKey && e.key.toLowerCase() === 'w') {
-    const wireframeBtn = document.getElementById('wireframe-toggle');
-    wireframeBtn.click();
-    e.preventDefault(); // Prevent browser tab close
-  }
-});
+            // Ctrl+W - Wireframe
+            if(e.ctrlKey && e.key.toLowerCase() === 'w') {
+                const wireframeBtn = document.getElementById('wireframe-toggle');
+                wireframeBtn.click();
+                e.preventDefault(); // Prevent browser tab close
+            }
+        });
 
-// WASD Orbit (Requires custom camera controls)
-const moveSpeed = 0.2;
-document.addEventListener('keydown', (e) => {
-  const direction = new THREE.Vector3();
-  
-  switch(e.key.toLowerCase()) {
-    case 'w': direction.z = -1; break;
-    case 's': direction.z = 1; break;
-    case 'a': direction.x = -1; break;
-    case 'd': direction.x = 1; break;
-  }
+        // WASD Orbit (Requires custom camera controls)
+        const moveSpeed = 0.2;
+        document.addEventListener('keydown', (e) => {
+            const direction = new THREE.Vector3();
+            
+            switch(e.key.toLowerCase()) {
+                case 'w': direction.z = -1; break;
+                case 's': direction.z = 1; break;
+                case 'a': direction.x = -1; break;
+                case 'd': direction.x = 1; break;
+            }
 
-  camera.position.add(direction.multiplyScalar(moveSpeed));
-  controls.target.add(direction.multiplyScalar(moveSpeed));
-  controls.update();
-});
+            camera.position.add(direction.multiplyScalar(moveSpeed));
+            controls.target.add(direction.multiplyScalar(moveSpeed));
+            controls.update();
+        });
+        
         scene.add(new THREE.GridHelper(100, 100));
         const grid = new THREE.GridHelper(100, 100);
         grid.renderOrder = 1;
         grid.material.depthTest = false;
         scene.add(grid);
-
-        const loader = new THREE.GLTFLoader();
-        loader.load('2010_lamborghini_murcielago_lp_670-4_sv.glb', (gltf) => {
-            gltf.scene.renderOrder = 2;
-            gltf.scene.scale.set(0.7, 0.7, 0.7);
-            gltf.scene.position.set(0, -0.3, 0);
-
-            gltf.scene.traverse((child) => {
-                if (child.material) {
-                    child.material.metalness = 0.5;
-                    child.material.roughness = 0.4;
-                }
-            });
-        
-            gltf.scene.traverse(child => {
-                if (child.isMesh) {
-                    const wireframe = new THREE.LineSegments(
-                        new THREE.EdgesGeometry(child.geometry),
-                        new THREE.LineBasicMaterial({ color: 0x00ffff })
-                    );
-                    child.add(wireframe);
-                }
-            });
-        
-            scene.add(gltf.scene);
-        }, undefined, (error) => {
-            console.error('Error loading model:', error);
-        });
 
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         camera.position.set(3, 1, 4);
@@ -633,173 +774,35 @@ document.addEventListener('keydown', (e) => {
                 menuVisible ? 'block' : 'none';
         };
 
-        document.getElementById('wireframe-toggle').addEventListener('click', toggleWireframe);
-        document.getElementById('menu-toggle').addEventListener('click', toggleMenu);
+        // Load the initial car model
+        loadCarModel(currentCar);
 
-        const backroomAmbience = () => {
-
-            const particles = new THREE.BufferGeometry();
-            const positions = new Float32Array(500 * 3);
-            for(let i = 0; i < 1500; i++) {
-                positions[i] = (Math.random() - 0.5) * 10;
+        // Ambient sound setup
+        const music = document.getElementById('ambient-sound');
+        music.volume = 0.3;
+        
+        let musicStarted = false;    
+        const startMusic = () => {
+            if(!musicStarted) {
+                music.play()
+                    .then(() => musicStarted = true)
+                    .catch(err => console.log('Music error:', err));
             }
-            particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            
-            const particleMaterial = new THREE.PointsMaterial({
-                size: 0.05,
-                color: 0x444444,
-                transparent: true
-            });
-            
-            const particleSystem = new THREE.Points(particles, particleMaterial);
-            scene.add(particleSystem);
-
-            const music = document.getElementById('ambient-sound');
-            music.volume = 0.3;
-            let loadingTimeout;
-            const loadingScreen = document.getElementById('loading-screen');
-
-            loadingScreen.style.display = 'flex';
-
-            loadingTimeout = setTimeout(() => {
-                loadingScreen.style.display = 'none';
-            }, 4000);
-
-            const loadingManager = new THREE.LoadingManager(
-                () => {
-                    clearTimeout(loadingTimeout);
-                    loadingScreen.style.display = 'none';
-                },
-                (item, loaded, total) => {
-                    console.log(`Loaded ${loaded}/${total} items`);
-                },
-                (url) => {
-                    console.error(`Error loading ${url}`);
-                    clearTimeout(loadingTimeout);
-                    loadingScreen.style.display = 'none';
-                }
-            );
-
-            const carCatalog = {
-                'murcielago': {
-                    model: 'models/murcielago.glb',
-                    specs: {  },
-                    polaroids: ['fap.png', 'engine.jpg', 'interior.jpg']
-                },
-                'chiron': {
-                    model: 'models/chiron.glb',
-                    specs: {  },
-                    polaroids: ['chiron-front.jpg', 'chiron-side.jpg']
-                }
-            };
-
-            let currentCar = 'murcielago';
-
-            function loadCar(modelKey) {
-                scene.traverse(child => {
-                    if(child.userData.isCar) {
-                        scene.remove(child);
-                    }
-                });
-                loader.load(carCatalog[modelKey].model, (gltf) => {
-                    gltf.scene.userData.isCar = true;
-                });
+        };
+        
+        document.addEventListener('click', startMusic);
+        document.addEventListener('keydown', startMusic);
+        
+        // Music toggle implementation
+        document.getElementById('music-toggle').addEventListener('click', () => {
+            if(music.paused) {
+                music.play();
+                document.getElementById('music-toggle').textContent = '🔊 Music On';
+            } else {
+                music.pause();
+                document.getElementById('music-toggle').textContent = '🔇 Music Off';
             }
-
-            const musicTracks = [
-                'audio/cyber-ambience.mp3',
-                'audio/bass-wave.mp3',
-                'audio/neon-drive.mp3'
-            ];
-            let currentTrack = 0;
-            const audioElement = new Audio(musicTracks[currentTrack]);
-            audioElement.loop = true;
-
-            document.getElementById('music-toggle').addEventListener('click', () => {
-                if(audioElement.paused) {
-                    audioElement.play();
-                    document.getElementById('music-toggle').textContent = '🔊 ON';
-                } else {
-                    audioElement.pause();
-                    document.getElementById('music-toggle').textContent = '🔇 OFF';
-                }
-            });
-
-            document.getElementById('track-select').addEventListener('change', (e) => {
-                currentTrack = e.target.value;
-                audioElement.src = musicTracks[currentTrack];
-                audioElement.play();
-            });
-
-            function createEnvironment() {
-                const room = new THREE.Group();
-                
-                const floor = new THREE.Mesh(
-                    new THREE.PlaneGeometry(100, 100),
-                    new THREE.MeshStandardMaterial({ color: 0x202020 })
-                );
-                floor.rotation.x = -Math.PI / 2;
-                floor.receiveShadow = true;
-                room.add(floor);
-
-                const wallGeometry = new THREE.BoxGeometry(50, 20, 1);
-                const wallMaterial = new THREE.MeshPhysicalMaterial({
-                    color: 0x303030,
-                    metalness: 0.8,
-                    roughness: 0.5
-                });
-
-                const walls = [];
-                for(let i = 0; i < 4; i++) {
-                    const wall = new THREE.Mesh(wallGeometry, wallMaterial);
-                    wall.castShadow = true;
-                    walls.push(wall);
-                }
-                
-                walls[0].position.z = -10;
-                walls[1].position.z = 10;
-                walls[2].position.x = -10;
-                walls[3].position.x = 10;
-                walls.forEach(w => w.rotation.y = Math.PI/2);
-                room.add(...walls);
-
-                scene.add(room);
-            }
-
-            const zoomSlider = document.getElementById('zoom-slider');
-            zoomSlider.addEventListener('input', (e) => {
-                camera.fov = 75 * (e.target.value / 50);
-                camera.updateProjectionMatrix();
-            });
-
-            document.addEventListener('keydown', (e) => {
-                if(e.ctrlKey && e.key === '+') {
-                    camera.fov *= 0.9;
-                    camera.updateProjectionMatrix();
-                }
-                if(e.ctrlKey && e.key === '-') {
-                    camera.fov *= 1.1;
-                    camera.updateProjectionMatrix();
-                }
-            });
-
-            const loader = new THREE.GLTFLoader(loadingManager);
-            const textureLoader = new THREE.TextureLoader(loadingManager);
-
-            let musicStarted = false;    
-            const startMusic = () => {
-                if(!musicStarted) {
-                    music.play()
-                        .then(() => musicStarted = true)
-                        .catch(err => console.log('Music error:', err));
-                }
-            };
-            
-            document.addEventListener('click', startMusic);
-            document.addEventListener('keydown', startMusic);
-        };      
-    
-        backroomAmbience();
+        });
     </script>
 </body>
 </html>
