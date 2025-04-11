@@ -94,7 +94,6 @@
         box-shadow: 0 0 15px #ff3300;
     }
 
-    /* Environment Selector */
     #environment-selector {
         position: fixed;
         top: 80px;
@@ -103,8 +102,26 @@
         z-index: 1000;
     }
        
-    #menu-toggle {
-        right: 20px;
+    .menu-button {
+        position: fixed;
+        top: -59px;
+        left: 90%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.7);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-family: 'Courier New', monospace;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+    .menu-button:hover {
+        background: #ff3300;
+        box-shadow: 0 0 15px #ff3300;
     }
 
     .windows-icon {
@@ -328,7 +345,7 @@
     <button class="ui-button" id="wireframe-toggle">WIREFRAME</button>
     <button id="music-toggle" class="control-btn">🔊 Music</button>
     <button id="dust-toggle" class="control-btn2">🌌 Dust</button>
-    <button class="ui-button" id="menu-toggle">
+    <button class="model-button" id="menu-toggle">
         <div class="windows-icon">
             <div class="windows-square"></div>
             <div class="windows-square"></div>
@@ -406,7 +423,6 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('model-container').appendChild(renderer.domElement);
 
-        // Loading manager to track loading progress
         const loadingManager = new THREE.LoadingManager();
         loadingManager.onProgress = function(url, itemsLoaded, itemsTotal) {
             const progressElement = document.querySelector('.loading-progress');
@@ -460,7 +476,6 @@
         keyLight.shadow.mapSize.height = 2048;
         groundLight.intensity = 0.8;
 
-        // Car catalog with model info and specifications
         const carCatalog = {
             'murcielago': {
                 model: '2010_lamborghini_murcielago_lp_670-4_sv.glb',
@@ -474,7 +489,7 @@
                 polaroids: ['images/FAP.png', 'images/engine shot.jpg', 'images/IS.png']
             },
             'aventador': {
-                model: 'models/aventador.glb',  // Placeholder - replace with actual path
+                model: 'models/aventador.glb',  
                 scale: 0.7,
                 position: [0, -0.3, 0],
                 specs: {
@@ -482,10 +497,10 @@
                     performance: "0-60 mph: 2.9s<br>Top Speed: 350 km/h<br>Weight: 1575 kg",
                     dimensions: "Length: 4.78m<br>Width: 2.26m<br>Height: 1.14m"
                 },
-                polaroids: ['images/FAP.png', 'images/engine shot.jpg', 'images/IS.png'] // Placeholder - replace with actual images
+                polaroids: ['images/FAP.png', 'images/engine shot.jpg', 'images/IS.png'] 
             },
             'huracan': {
-                model: 'models/huracan.glb',  // Placeholder - replace with actual path
+                model: 'models/huracan.glb', 
                 scale: 0.7,
                 position: [0, -0.3, 0],
                 specs: {
@@ -493,25 +508,20 @@
                     performance: "0-60 mph: 3.2s<br>Top Speed: 325 km/h<br>Weight: 1422 kg",
                     dimensions: "Length: 4.46m<br>Width: 1.92m<br>Height: 1.16m"
                 },
-                polaroids: ['images/FAP.png', 'images/engine shot.jpg', 'images/IS.png'] // Placeholder - replace with actual images
-            }
+                polaroids: ['images/FAP.png', 'images/engine shot.jpg', 'images/IS.png'] 
         };
 
-        // Current car model reference
         let currentCarModel = null;
         let currentCar = 'murcielago';
 
-        // Function to load car model
         function loadCarModel(modelKey) {
-            // Show loading screen
             document.getElementById('loading-screen').style.display = 'flex';
             
-            // Remove current model if it exists
             if (currentCarModel) {
                 scene.remove(currentCarModel);
             }
             
-            // Update car info
+
             const carInfo = carCatalog[modelKey];
             if (!carInfo) {
                 console.error('Car model not found:', modelKey);
@@ -519,12 +529,10 @@
                 return;
             }
             
-            // Update specifications
             document.querySelector('#spec-cards .spec-card:nth-child(1) p').innerHTML = carInfo.specs.engine;
             document.querySelector('#spec-cards .spec-card:nth-child(2) p').innerHTML = carInfo.specs.performance;
             document.querySelector('#spec-cards .spec-card:nth-child(3) p').innerHTML = carInfo.specs.dimensions;
             
-            // Update polaroids (if they exist)
             const polaroids = document.querySelectorAll('#left-polaroids .polaroid img');
             carInfo.polaroids.forEach((src, index) => {
                 if (polaroids[index]) {
@@ -532,13 +540,11 @@
                 }
             });
             
-            // Load new model
             const loader = new THREE.GLTFLoader(loadingManager);
             loader.load(carInfo.model, (gltf) => {
                 gltf.scene.scale.set(carInfo.scale, carInfo.scale, carInfo.scale);
                 gltf.scene.position.set(...carInfo.position);
                 
-                // Apply materials
                 gltf.scene.traverse((child) => {
                     if (child.material) {
                         child.material.metalness = 0.5;
@@ -677,7 +683,7 @@
         const zoomSlider = document.getElementById('zoom-slider');
         zoomSlider.addEventListener('input', (e) => {
             const zoomValue = e.target.value;
-            camera.fov = 120 - zoomValue; // Reversed: lower value = zoom out, higher value = zoom in
+            camera.fov = 120 - zoomValue; 
             camera.updateProjectionMatrix();
         });
 
@@ -703,15 +709,13 @@
                 envSelect.dispatchEvent(new Event('change'));
             }
 
-            // Ctrl+W - Wireframe
             if(e.ctrlKey && e.key.toLowerCase() === 'w') {
                 const wireframeBtn = document.getElementById('wireframe-toggle');
                 wireframeBtn.click();
-                e.preventDefault(); // Prevent browser tab close
+                e.preventDefault(); 
             }
         });
 
-        // WASD Orbit (Requires custom camera controls)
         const moveSpeed = 0.2;
         document.addEventListener('keydown', (e) => {
             const direction = new THREE.Vector3();
@@ -774,10 +778,8 @@
                 menuVisible ? 'block' : 'none';
         };
 
-        // Load the initial car model
         loadCarModel(currentCar);
 
-        // Ambient sound setup
         const music = document.getElementById('ambient-sound');
         music.volume = 0.3;
         
