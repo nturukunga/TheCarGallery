@@ -1,0 +1,275 @@
+/* Main Styles */
+body { 
+    margin: 0;
+    background: #111;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+/* Navigation Bar */
+#nav-bar {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 8px 15px;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-width: 60%;
+}
+
+.nav-button {
+    border: none; 
+    padding: 8px 15px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
+}
+
+.nav-button:hover {
+    background-color: rgba(255, 51, 0, 0.3);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+    border: 1px solid rgba(255, 51, 0, 0.3);
+    transform: translateY(-2px);
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
+}
+
+select.nav-button {
+    min-width: 150px;
+}
+
+.windows-icon {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3px;
+    width: 16px;
+    height: 16px;
+}
+
+.windows-square {
+    background: white;
+    width: 6px;
+    height: 6px;            
+}
+
+/* Zoom Control */
+#zoom-control {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    height: 200px;
+}
+
+#model-container {
+    z-index: 0 !important;
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+}
+
+/* Loading Screen */
+#loading-screen {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.loader {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #ff3300;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+.loading-progress {
+    margin-top: 10px;
+    font-size: 16px;
+    font-family: 'Courier New', monospace;
+}
+
+.loading-model-name {
+    margin-top: 5px;
+    font-size: 14px;
+    font-family: 'Courier New', monospace;
+    color: #ff3300;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.backroom-fog {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.8));
+    z-index: 2;
+}
+
+/* Make sure polaroids are initially hidden */
+.polaroid-column#left-polaroids {
+    position: fixed;
+    left: -250px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 250px;
+    transition: left 0.3s ease;
+    z-index: 90;
+}
+
+#left-polaroids.active {
+    left: 10px;
+}
+
+.polaroid {
+    width: 100%;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 3px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.polaroid img {
+    width: 100%;
+    height: 100%; 
+    object-fit: cover; 
+    background: #f5f5f5; 
+    padding: 5px;
+    border-radius: 2px;
+}
+
+.polaroid p {
+    text-align: center;
+    margin: 10px 0 5px;
+    font-size: 0.9em;
+    color: #444;
+}
+
+.polaroid:hover {
+    transform: rotate(2deg) scale(1.02);
+    z-index: 1;
+}
+
+#spec-cards {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 250px;
+}
+
+/* Glass morphism for spec cards */
+.spec-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    margin: 10px 0;
+    border-left: 4px solid #ff3300;
+    border-radius: 4px;
+    color: white;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.2);
+    border: 1px solid rgba(255, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.spec-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 20px rgba(255, 0, 0, 0.3);
+}
+
+.spec-card h3 {
+    color: #ff3300;
+    margin-top: 0;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
+
+/* Fixed red zoom slider */
+#zoom-slider {
+    -webkit-appearance: none;
+    width: 10px;
+    height: 200px;
+    background: rgba(0, 0, 0, 0.5);
+    outline: none;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border-radius: 5px;
+    transform: rotate(180deg);
+}
+
+#zoom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #ff3300;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px #ff3300;
+}
+
+#zoom-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #ff3300;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px #ff3300;
+}
+
+select {
+    background: rgba(0, 0, 0, 0.5);
+    color: #ff3300;
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    padding: 8px 12px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    outline: none;
+}
+
+select:hover {
+    background: rgba(255, 51, 0, 0.2);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+}
+
+select option {
+    background: #111;
+    color: #ff3300;
+} 
