@@ -85,7 +85,7 @@ const setupLighting = () => {
     scene.add(flickerLight);
 
     setInterval(() => {
-        flickerLight.intensity = Math.random() * 0.5 + 1.2; // Increased base intensity
+        flickerLight.intensity = Math.random() * 0.5 + 1.2; 
     }, 100);
 
 
@@ -149,7 +149,7 @@ const carCatalog = {
     },
     'agera': {
         model: 'models/2011_koenigsegg_agera.glb',
-        scale: 2.0, // Significantly increased scale
+        scale: 2.0, 
         position: [0, 0, 0],
         yOffset: 0,
         specs: {
@@ -173,7 +173,7 @@ const carCatalog = {
     },
     'huayra': {
         model: 'models/pagani_huayra_r_gt2_2022.glb',
-        scale: 0.7, // Adjusted to match Murcielago
+        scale: 0.7, 
         position: [0, 0, 0],
         yOffset: 0,
         specs: {
@@ -185,7 +185,7 @@ const carCatalog = {
     },
     'mclaren': {
         model: 'models/2017_mclaren_720s_lb.glb',
-        scale: 6.0, // Significantly increased for better visibility
+        scale: 6.0, 
         position: [0, 0, 0],
         yOffset: 0,
         specs: {
@@ -197,7 +197,7 @@ const carCatalog = {
     },
     'jaguar': {
         model: 'models/jaguar_c-x75_concept_2013.glb',
-        scale: 5.0, // Significantly increased scale
+        scale: 5.0, 
         position: [0, 0, 0],
         yOffset: 0,
         specs: {
@@ -207,10 +207,10 @@ const carCatalog = {
         },
         polaroids: ['images/FAP.png', 'images/engine shot.jpg', 'images/IS.png']
     },
-    // Additional cars
+   
     'slr': {
         model: 'models/2009_mercedes-benz_slr_mclaren_722s_roadster.glb',
-        scale: 5.0, // Increased scale
+        scale: 5.0, 
         position: [0, 0, 0],
         yOffset: 0,
         specs: {
@@ -224,7 +224,7 @@ const carCatalog = {
         model: 'models/2024_rezvani_vengeance.glb',
         scale: 1.0,
         position: [0, 0, 0],
-        yOffset: -0.5, // Adjusted to center on floor
+        yOffset: -0.5, 
         specs: {
             engine: "6.2L Supercharged V8<br>682 HP @ 6000 RPM<br>653 lb-ft Torque",
             performance: "0-60 mph: 4.5s<br>Top Speed: 260 km/h<br>Weight: 2720 kg",
@@ -270,7 +270,7 @@ const carCatalog = {
     },
     'reventon': {
         model: 'models/2010_lamborghini_reventon_roadster.glb',
-        scale: 3.0, // Increased scale
+        scale: 3.0, 
         position: [0, 0, 0],
         yOffset: 0,
         specs: {
@@ -306,7 +306,7 @@ function createStandardFloor() {
         })
     );
     standardFloor.rotation.x = -Math.PI/2;
-    standardFloor.position.y = -0.01; // Slightly below the grid
+    standardFloor.position.y = -0.01;
     standardFloor.receiveShadow = true;
     scene.add(standardFloor);
     
@@ -332,11 +332,9 @@ function createGrids() {
     scene.add(defaultGrid);
     scene.add(detailedGrid);
     
-    // Create the standard floor
     createStandardFloor();
 }
 
-// Update grid based on wireframe state
 function updateGrids() {
     if (wireframeVisible) {
         detailedGrid.visible = true;
@@ -345,7 +343,6 @@ function updateGrids() {
     }
 }
 
-// Load car model function
 function loadCarModel(modelKey) {
     document.getElementById('loading-screen').style.display = 'flex';
     const modelNameElement = document.querySelector('.loading-model-name');
@@ -393,7 +390,7 @@ function loadCarModel(modelKey) {
         console.error('Loading timeout for model: ' + carInfo.model);
         document.getElementById('loading-screen').style.display = 'none';
         alert('Loading timed out. Please try again or choose another model.');
-    }, 30000); // 30 second timeout
+    }, 30000); 
     
     loader.load(carInfo.model, 
     (gltf) => {
@@ -439,7 +436,6 @@ function loadCarModel(modelKey) {
                     child.receiveShadow = true;
                 }
                 
-                // Add wireframe to each mesh
                 const wireframe = new THREE.LineSegments(
                     new THREE.EdgesGeometry(child.geometry),
                     new THREE.LineBasicMaterial({ 
@@ -524,23 +520,22 @@ const environments = {
         
         ['front', 'back', 'left', 'right'].forEach((side, i) => {
             const wall = new THREE.Mesh(
-                new THREE.BoxGeometry(120, 20, 1), // Further increased width
+                new THREE.BoxGeometry(120, 20, 1), 
                 wallMaterial
             );
             wall.castShadow = true;
             wall.receiveShadow = true;
             wall.position.set(
-                side === 'left' ? -60 : side === 'right' ? 60 : 0, // Further increased distance
+                side === 'left' ? -60 : side === 'right' ? 60 : 0, 
                 0,
-                side === 'front' ? -60 : side === 'back' ? 60 : 0  // Further increased distance
+                side === 'front' ? -60 : side === 'back' ? 60 : 0  
             );
             if(side === 'left' || side === 'right') wall.rotation.y = Math.PI/2;
             walls.add(wall);
         });
         
-        // Add floor
         const floor = new THREE.Mesh(
-            new THREE.PlaneGeometry(120, 120), // Increased size
+            new THREE.PlaneGeometry(120, 120), 
             new THREE.MeshStandardMaterial({ 
                 color: 0x101020,
                 metalness: 0.5,
@@ -548,7 +543,7 @@ const environments = {
             })
         );
         floor.rotation.x = -Math.PI/2;
-        floor.position.y = -0.01; // Slightly below the grid
+        floor.position.y = -0.01; 
         floor.receiveShadow = true;
         walls.add(floor);
         
@@ -598,21 +593,16 @@ function loadShowroomModel(path) {
         loader.load(path, (gltf) => {
             const showroom = gltf.scene;
             
-            // Scale and position the showroom - adjusted to better fit cars
-            showroom.scale.set(5.0, 5.0, 5.0); // Significantly increased scale for better visibility
+            showroom.scale.set(5.0, 5.0, 5.0); 
             showroom.position.set(0, 0, 0);
             
-            // Adjust materials for better visibility while preserving textures
             showroom.traverse((child) => {
                 if (child.isMesh) {
-                    // Preserve original material but adjust properties
                     if (child.material) {
-                        // If material is very bright/white, tone it down with a subtle blue tint
                         if (child.material.color && (child.material.color.r > 0.8 && child.material.color.g > 0.8 && child.material.color.b > 0.8)) {
-                            child.material.color.setRGB(0.7, 0.75, 0.85); // Subtle blue-gray tint
+                            child.material.color.setRGB(0.7, 0.75, 0.85); 
                         }
                         
-                        // Adjust material properties for better contrast
                         child.material.metalness = Math.min(child.material.metalness || 0, 0.5) + 0.2;
                         child.material.roughness = Math.max(child.material.roughness || 0, 0.3);
                         
@@ -630,7 +620,6 @@ function loadShowroomModel(path) {
                     child.receiveShadow = true;
                     child.castShadow = true;
                     
-                    // Add wireframe to showroom elements
                     if (wireframeVisible) {
                         const wireframe = new THREE.LineSegments(
                             new THREE.EdgesGeometry(child.geometry),
@@ -652,7 +641,6 @@ function loadShowroomModel(path) {
     });
 }
 
-// Initialize particle system
 function createParticleSystem() {
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(2000 * 3);
@@ -675,16 +663,14 @@ function createParticleSystem() {
     return particleSystem;
 }
 
-// Create dust particles
 const particleSystem = createParticleSystem();
 
-// Set up camera controls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 camera.position.set(3, 1, 4);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 controls.minDistance = 2;
-controls.maxDistance = 30; // Increased for better viewing
+controls.maxDistance = 30; 
 
 // UI interactivity and timeout
 let uiTimeout;
@@ -702,17 +688,14 @@ controls.addEventListener('end', () => {
     }, 3000);
 });
 
-// Animation loop
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
     
-    // Add subtle rotation to the car for showroom effect
     if (currentCarModel && !controls.enabled) {
         currentCarModel.rotation.y += 0.005;
     }
     
-    // Animate particles
     if (particleSystem && particlesVisible) {
         particleSystem.rotation.y += 0.0005;
     }
@@ -720,21 +703,15 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-    // Create default and detailed grids
     createGrids();
     
-    // Initialize UI elements and their event listeners
     initUIControls();
     
-    // Load default car and environment
     loadCarModel(currentCar);
     
-    // Start animation loop
     animate();
     
-    // Handle window resize
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -742,16 +719,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Initialize UI controls and event listeners
 function initUIControls() {
-    // Car selector
     const carSelector = document.getElementById('car-selector');
-    // Clear existing options
     while (carSelector.firstChild) {
         carSelector.removeChild(carSelector.firstChild);
     }
     
-    // Add options for all cars in the catalog
     Object.keys(carCatalog).forEach(carKey => {
         const option = document.createElement('option');
         option.value = carKey;
@@ -764,14 +737,11 @@ function initUIControls() {
         loadCarModel(currentCar);
     });
     
-    // Environment selector
     const roomSelect = document.getElementById('room-select');
-    // Clear existing options
     while (roomSelect.firstChild) {
         roomSelect.removeChild(roomSelect.firstChild);
     }
     
-    // Add options for environments
     const environmentOptions = {
         'grid': 'Basic Grid',
         'walls': 'Cyber Garage',
@@ -791,45 +761,36 @@ function initUIControls() {
     roomSelect.addEventListener('change', async (e) => {
         const selectedEnv = e.target.value;
         
-        // Remove current environment including any 3D showroom
         if (currentEnvironment) {
             scene.remove(currentEnvironment);
             currentEnvironment = null;
         }
         
-        // Properly remove any existing 3D showroom
         if (currentShowroom) {
             scene.remove(currentShowroom);
             currentShowroom = null;
         }
         
-        // Load new environment
         if (['showroom1', 'batcave', 'photoshoot'].includes(selectedEnv)) {
-            // For 3D showroom models
             currentShowroom = await environments[selectedEnv]();
             currentEnvironment = null;
         } else {
-            // For built-in environments
             currentEnvironment = environments[selectedEnv]();
         }
     });
     
-    // Wireframe toggle
     const wireframeButton = document.getElementById('wireframe-toggle');
     wireframeButton.innerHTML = '🌀 WIREFRAME ON';
     wireframeButton.addEventListener('click', () => {
         wireframeVisible = !wireframeVisible;
-        // Update car wireframes
         scene.traverse(child => {
             if (child.isLineSegments) child.visible = wireframeVisible;
         });
-        // Update grid detail level
         updateGrids();
         
         wireframeButton.textContent = wireframeVisible ? '🌀 WIREFRAME ON' : '🚫 WIREFRAME OFF';
     });
     
-    // Dust particle toggle
     const dustToggle = document.getElementById('dust-toggle');
     dustToggle.addEventListener('click', () => {
         particlesVisible = !particlesVisible;
@@ -837,13 +798,11 @@ function initUIControls() {
         dustToggle.textContent = particlesVisible ? '🌌 DUST ON' : '🚫 DUST OFF';
     });
     
-    // Menu toggle for polaroids
     const menuToggle = document.getElementById('menu-toggle');
     menuToggle.addEventListener('click', () => {
         const polaroids = document.getElementById('left-polaroids');
         polaroids.classList.toggle('active');
         
-        // Store the state in local storage to persist between page loads
         if (polaroids.classList.contains('active')) {
             localStorage.setItem('polaroidsActive', 'true');
         } else {
@@ -851,32 +810,24 @@ function initUIControls() {
         }
     });
     
-    // Zoom slider
     const zoomSlider = document.getElementById('zoom-slider');
     zoomSlider.addEventListener('input', (e) => {
         const zoomValue = e.target.value;
         
-        // Get the current direction from camera to target
         const direction = new THREE.Vector3();
         direction.subVectors(camera.position, controls.target);
         
-        // Get the current distance
         const currentDistance = direction.length();
         
-        // Normalize the direction vector
         direction.normalize();
         
-        // Calculate new distance based on zoom value (smaller value = closer)
         const newDistance = 20 - (zoomValue / 100) * 15;
         
-        // Set the new camera position
         camera.position.copy(controls.target).add(direction.multiplyScalar(newDistance));
         
-        // Update controls
         controls.update();
     });
     
-    // Music controls
     const music = document.getElementById('ambient-sound');
     if (music) {
         music.volume = 0.3;
@@ -893,7 +844,6 @@ function initUIControls() {
         document.addEventListener('click', startMusic);
         document.addEventListener('keydown', startMusic);
         
-        // Music toggle implementation
         const musicToggle = document.getElementById('music-toggle');
         if (musicToggle) {
             musicToggle.addEventListener('click', () => {
@@ -908,9 +858,7 @@ function initUIControls() {
         }
     }
     
-    // Keyboard controls
     document.addEventListener('keydown', (e) => {
-        // Zoom controls
         if(e.ctrlKey && e.key === '+') {
             camera.fov *= 0.9;
             camera.updateProjectionMatrix();
@@ -922,13 +870,11 @@ function initUIControls() {
             e.preventDefault();
         }
         
-        // Music toggle with M key
         if(e.key.toLowerCase() === 'm') {
             const musicBtn = document.getElementById('music-toggle');
             if (musicBtn) musicBtn.click();
         }
         
-        // Environment toggle with spacebar
         if(e.key === ' ') {
             const envSelect = document.getElementById('room-select');
             const currentIndex = Array.from(envSelect.options).findIndex(opt => opt.selected);
@@ -938,7 +884,6 @@ function initUIControls() {
             e.preventDefault();
         }
         
-        // Wireframe toggle with Ctrl+W
         if(e.ctrlKey && e.key.toLowerCase() === 'w') {
             const wireframeBtn = document.getElementById('wireframe-toggle');
             wireframeBtn.click();
@@ -946,7 +891,6 @@ function initUIControls() {
         }
     });
     
-    // Camera movement with WASD keys
     const moveSpeed = 0.2;
     document.addEventListener('keydown', (e) => {
         const direction = new THREE.Vector3();
@@ -958,7 +902,6 @@ function initUIControls() {
             case 'd': direction.x = 1; break;
         }
         
-        // Only move if actually a movement key
         if (direction.length() > 0) {
             camera.position.add(direction.multiplyScalar(moveSpeed));
             controls.target.add(direction.multiplyScalar(moveSpeed));
