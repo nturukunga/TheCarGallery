@@ -109,9 +109,9 @@ const lights = setupLighting();
 
 const carCatalog = {
     'murcielago': {
-        model: './2010_lamborghini_murcielago_lp_670-4_sv.glb',
+        model: 'models/2010_lamborghini_murcielago_lp_670-4_sv.glb',
         scale: 0.7,
-        position: [0, 0, 0], // Reference position
+        position: [0, 0, 0], 
         yOffset: 0,
         specs: {
             engine: "6.5L V12 Engine<br>670 HP @ 8000 RPM<br>487 lb-ft Torque",
